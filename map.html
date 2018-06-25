@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset='utf-8' />
+    <title>Sur la route d'un réfugié syrien - Geneviève Donnet</title>
+        <meta name="description" content="Cette animation décrit la route des réfugiés syriens à travers l'Europe">
+        <meta name="author" content="Geneviève Donnet">
+        <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,700' rel='stylesheet' type='text/css'>
+        <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+        <link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="css/skeleton.css">
+
+        <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+        <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+
+
+        <!-- Mapbox GL GS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+        <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.11.4/mapbox-gl.js'></script>
+        <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.11.4/mapbox-gl.css' rel='stylesheet' />
+
+
+
+        <body>
+
+            <div id='map'>
+                <div class="menu-ui">
+                    <h1>Sur la route d'un réfugié syrien</h1>
+                    <p>Pour atteindre le 'refuge' européen, les migrants doivent prendre des risques considérables et affronter, dans des pays membres de l'UE, des traitements indignes. Y résisteriez-vous? Mettez-vous dans la peau d'un Syrien pour vous faire une idée des obstacles auxquels ils sont confrontés sur leur très long périple.</p>
+                    <p>Cliquer sur "Afficher la route" pour voir le chemin qu'empruntent les réfugiés. Puis cliquer sur chaque point pour en savoir plus sur les grandes étapes du parcours.
+                        <br>Cliquer sur "Afficher la vue d'ensemble" pour revenir à une vue globale.</p>
+                    <a href='#' onclick='switchVisibility()' ; class='button button-primary' id=''>Afficher la route</a>
+                    <a href='#' onclick='displayFlat()' ; class='button button-primary' id=''>Afficher la vue d'ensemble</a>
+                </div>
+                
+            </div>
+            <div id="descr">
+                   <div id='titre'></div>
+                    <div id='description'></div>
+            </div>
+            <div class="copyright">Tiré de <a href="http://tecfaetu.unige.ch/etu-maltt/volt/donnet5/vip/migrants.html" target="_blank">Migrants</a> - Textes: Cathy Macherel - Réalisation: Geneviève Donnet (<a href="http://tecfaetu.unige.ch/etu-maltt/volt/donnet5/">page travaux</a> | <a href="http://tecfaetu.unige.ch/perso/maltt/donnet5/">page personnelle</a>) - Fait avec Skeleton et Mapbox
+            </div>
+
+            <script>
+                /* instancier une carte */
+                mapboxgl.accessToken = 'pk.eyJ1IjoiZ2Rvbm5ldCIsImEiOiJjaWhidTU2c24wMDZ5djBranEyamRzbXo0In0.FcW76_MkQ4x66CQ-6-DaRg';
+                var map = new mapboxgl.Map({
+                    container: 'map', //la carte s'affiche dans la div #map créée ci-dessus
+                    style: 'mapbox://styles/mapbox/dark-v8', //les markers à disposition changent en fonction du style choisi. 
+                    center: [14.561, 44.494], //carte centrée pour que toute l'europe et le moyen-orient s'affiche. Idéalement il faudrait utiliser map.fitBounds pour que tous les points s'affichent cf https://www.mapbox.com/mapbox-gl-js/api/#Map.fitBounds*/ 
+                    zoom: 4 //niveau de zoom
+                });
+                
+                map.on('style.load', function () {
+                    /* ajouter des données au format GeoJSON. J'aurais aussi pu les mettre dans un fichier et passer l'url*/
+                var geojson = new mapboxgl.GeoJSONSource({
+                        data: {
+                            "type": "FeatureCollection",
+                            "features": [
+                                {
+                                    "type": "Feature",
+                                    "properties": {
+                                        "title": "Départ: Homs",
+                                        "marker-symbol": "secondary_marker",
+                                        "description": "Vous êtes sunnite, et tous les jours, les avions des armées syrienne et russe bombardent votre quartier. Plusieurs de vos voisins sont morts dans ces frappes. Vous n’en pouvez plus et décidez de quitter la Syrie. Votre but: rejoindre le Royaume-Uni. Vous rassemblez toutes vos économies et partez sur la route, direction Antioche"
+                                    },
+                                    "geometry": {
+                                        "type": "Point",
+                                        "coordinates": [
+                            36.7166667,
+                            34.7333333
+
+                        ]
+                                    }
+                        },
+                                {
+                                    "type": "Feature",
+                                    "properties": {
+                                        "title": "Antioche",
+                                        "marker-symbol": "default_marker",
+                                        "description": "Votre option: gagner, en bus, les stations turques qui bordent la mer Méditerranée et font face aux îles grecques. Jusqu'à Izmir, par exemple. Premier obstacle: il faut franchir la frontière turque, alors qu'Ankara pratique une politique de refoulement des réfugiés en totale violation du droit humanitaire. Il faut désormais recourir à des passeurs pour fuir une Syrie en guerre. Ces trajets impliquent parfois des marches de 12h à travers la montagne. Comptez 500 euros pour le passeur, puis 50 euros pour le bus jusqu'à Izmir."
+                                    },
+                                    "geometry": {
+                                        "type": "Point",
+                                        "coordinates": [ 
+                            36.176189,
+                            36.200150
+                        ]
+                                    }
+                        },
+                                {
+                                    "type": "Feature",
+                                    "properties": {
+                                        "title": "Izmir",
+                                        "marker-symbol": "default_marker",
+                                        "description": "A Izmir, après des heures de bus et la peur des contrôles de l'armée turque, il s'agit de trouver un passeur pour rejoindre Lesbos; ce n'est pas ça qui manque. L'île grecque n'est qu'à 10 km seulement du rivage turc, mais la traversée est périlleuse. Des centaines de personnes, dont beaucoup d’enfants, sont morts en 2015 parce que leur canot a chaviré, victime de surcharge ou du mauvais temps. Vous êtes à la merci des éléments et des passeurs, prêts à vous abandonner au moindre pépin."
+                                    },
+                                    "geometry": {
+                                        "type": "Point",
+                                        "coordinates": [
+                            27.142826,
+                            38.423734
+                        ]
+                                    }
+                        },
+                                {
+                                    "type": "Feature",
+                                    "properties": {
+                                        "title": "Lesbos", //ne s'affiche pas au premier clic
+                                        "marker-symbol": "default_marker",
+                                        "description": "Après une nuit difficile en mer, vous avez cru votre dernière heure venue lorsque votre a bateau a chaviré à 500 mètres du rivage. Vous devez la vie sauve à l'une des nombreuses ONG engagées dans les opérations de sauvetage, en soutien aux gardes-côtes. Vous avez la vie sauve, mais combien d'autres ont péri?"
+                                    },
+                                    "geometry": {
+                                        "type": "Point",
+                                        "coordinates": [
+                            26.2777073,
+                            39.2645095
+
+                        ]
+                                    }
+                        },
+                                {
+                                    "type": "Feature",
+                                    "properties": {
+                                        "title": "Gevgelija", //le titre de ce marker s'affiche mal, je ne sais pas pourquoi, un chevauchement avec une tile peut-être
+                                        "marker-symbol": "default_marker",
+                                        "description": "En Macédoine, les migrants n'ont pas le droit d'emprunter les transports publics. On voit des milliers de personnes se déplacer à pied, à vélo. Elles sont exposées à des bandes criminelles qui les volent ou font chanter ceux qui n'ont pas d'argent, contraints d'appeler leur famille en Syrie pour opérer des transferts via Western Union. Si vous les avez encore, vous perdez 500 euros pour cause de racket assuré."
+                                    },
+                                    "geometry": {
+                                        "type": "Point",
+                                        "coordinates": [
+                            22.499747,
+                            41.145189
+
+                        ]
+                                    }
+                        },
+                        {
+                                    "type": "Feature",
+                                    "properties": {
+                                        "title": "Mitrovice", 
+                                        "marker-symbol": "default_marker",
+                                        "description": "Après la Bulgarie ou la Macédoine où il y a toutes les chances d'avoir été racketté, il s'agit de traverser la Serbie en autocar pour atteindre la frontière hongroise. Or, courant 2015, Budapest a multiplié les murs avec ses pays frontaliers pour empêcher les indésirables d'arriver sur son sol. Des lois votées la même année permettent de condamner tous ceux qui traversent illégalement les barbelés."
+                                    },
+                                    "geometry": {
+                                        "type": "Point",
+                                        "coordinates": [
+                            20.866000,
+                            42.891391
+
+                        ]
+                                    }
+                        },
+                        {
+                                    "type": "Feature",
+                                    "properties": {
+                                        "title": "Kanjiza", 
+                                        "marker-symbol": "default_marker",
+                                        "description": "Comme nombre d'autres migrants, vous tentez de franchir les barbelés serbes en les cisaillant. Mais la police hongroise veille. Mi-septembre 2015, elle arrêtait ses premiers 60 migrants en une seule nuit, lesquels ont été poursuivis pour avoir endommagé le matériel de l'Etat. Selon une loi votée dans l'urgence, ces actes prévoient jusqu'à cinq ans d'emprisonnement. Vous devez soudoyer la police pour vous sortir de là. Il vous en coûte 500 euros."
+                                    },
+                                    "geometry": {
+                                        "type": "Point",
+                                        "coordinates": [
+                            20.046958, 
+                            46.061602
+
+                        ]
+                                    }
+                        },
+                        {
+                                    "type": "Feature",
+                                    "properties": {
+                                        "title": "Budapest", 
+                                        "marker-symbol": "default_marker",
+                                        "description": "Vous voilà arrivé à Budapest, avec l'intention de passer la frontière autrichienne. L'Allemagne est à portée de main. "
+                                    },
+                                    "geometry": {
+                                        "type": "Point",
+                                        "coordinates": [
+                            19.040235, 
+                            47.497912
+
+                        ]
+                                    }
+                        },
+                                {
+                                    "type": "Feature",
+                                    "properties": {
+                                        "title": "Munich",
+                                        "marker-symbol": "default_marker",
+                                        "description": "Des panneaux de bienvenue sont brandis en gare de Munich, la population amène vivres, chaussures, pampers... Cela réchauffe les coeurs après des semaines de souffrance. Mais cet accueil dissimule aussi une autre réalité, celle de la montée de l'intolérance, même dans les pays les plus ouverts comme l'Allemagne et la Suède."
+                                    },
+                                    "geometry": {
+                                        "type": "Point",
+                                        "coordinates": [
+                            11.581981, 
+                            48.135125
+
+                        ]
+                                    }
+                        },
+                            {
+                                    "type": "Feature",
+                                    "properties": {
+                                        "title": "Calais", 
+                                        "marker-symbol": "default_marker",
+                                        "description": "Vous vous retrouvez dans la 'jungle de Calais', où 4500 migrants vivent au milieu des rats, conditions insalubres condamnées par le Conseil de l'Europe. Les médias l'ont qualifié de plus grand bidonville du continent. Sans compter les maladies, 40% des gens qui y vivent sont blessés. Pour fuir cet enfer et traverser la Manche, il faudra encore prendre d'énormes risques."
+                                    },
+                                    "geometry": {
+                                        "type": "Point",
+                                        "coordinates": [
+                            1.452706, 
+                            49.806514
+
+                        ]
+                                    }
+                        },
+                        {
+                                    "type": "Feature",
+                                    "properties": {
+                                        "title": "Arrivée: Londres", 
+                                        "marker-symbol": "secondary_marker",
+                                        "description": "Vous utilisez les services d'un passeur qui vous fait monter dans un camion avec la complicité du chauffeur, lequel saura au mieux comment vous cacher. Ce service vous  coûte 1500 euros. Vous avez pris d'énormes risques et dépensé beaucoup d'argent pour arriver enfin au bout de votre voyage. Au Royaume-Uni, vous ne serez pas au bout de vos peines. Le pays, sous pression de la montée des mouvements xénophobes qui grandissent eu Europe, se montre de plus en plus fermé. Bonne chance."
+                                    },
+                                    "geometry": {
+                                        "type": "Point",
+                                        "coordinates": [
+                            -0.127758, 
+                            51.507351
+
+                        ]
+                                    }
+                        }
+                    ]
+                        }//fin Data
+                    });
+                    map.addSource('markers', geojson);
+                    
+                    // ajouter une source de données pour les traits de la route, au format geojson
+                    map.addSource("route", {
+                        "type": "geojson",
+                        "data": {
+                            "type": "Feature",
+                            "properties": {},
+                            "geometry": {
+                                "type": "LineString",
+                                /*idéalement il faudrait récupérer les coordonnées  de mon objet geojson au lieu de les recopier... */
+                                "coordinates": [
+                            [36.7166667, 34.7333333],
+                            [36.176189, 36.200150],
+                            [27.1287200, 38.4188500], 
+                            [26.2777073, 39.2645095],
+                            [22.499747, 41.145189],
+                            [20.866000, 42.891391],
+                            [20.046958, 46.061602],
+                            [19.040235, 47.497912],
+                            [11.581981, 48.135125],
+                            [1.452706, 49.806514],
+                            [-0.127758, 51.507351]
+                ]
+                            }
+                        }
+                    });
+                     
+                    
+                    //charger cette layer en premier pour que les lignes soient sous les markers
+                    map.addLayer({
+                        "id": "route",
+                        "type": "line",
+                        "source": "route",
+                        "layout": {
+                            "visibility": "none", //la layer n'est pas visible par défaut, c'est lorsqu'on appuie sur le bouton Afficher la route qu'elle devient visible
+                            "line-join": "round", //ces attributs sont assez basiques, on pourrait faire mieux
+                            "line-cap": "round"
+                        },
+                        "paint": {
+                            "line-color": "#888",
+                            "line-width": 4
+                        }
+                    });
+
+                    // ajouter la source comme layer et ajouter des styles
+                    map.addLayer({
+                        "id": "symbols",
+                        "interactive": true, //pour que le marker soit cliquable
+                        "type": "symbol",
+                        "source": "markers",
+                        "layout": {
+                            "visibility": "none",
+                            "icon-image": "{marker-symbol}",
+                            "text-field": "{title}",
+                            "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
+                            "text-offset": [0, 0.6],
+                            "text-anchor": "top",
+                            "text-ignore-placement": true,
+                            "text-allow-overlap": true,
+                            "icon-ignore-placement": true //permet les chevauchements si les points sont proches les uns des autres
+                        },
+                        "paint": {
+                            //"text-size": 32,
+                            "text-size": {
+                                "stops": [[4, 24], [7, 32], [15, 40]] //censé afficher le texte à des tailles différentes en fonction du zoom
+                            },
+                            "text-color": "red"
+                        }
+                    });
+
+                });//fin map.on style.load
+                
+                /* afficher le titre et la description lorsqu'on clique sur un marker */
+                map.on('click', function (e) {
+                    // Use featuresAt to get features within a given radius of the click event
+                    // Use layer option to avoid getting results from other layers
+                    map.featuresAt(e.point, {
+                        layer: 'symbols',
+                        radius: 10,
+                        includeGeometry: true
+                    }, function (err, features) {
+                        if (err) throw err;
+                        // if there are features within the given radius of the click event,
+                        // fly to the location of the click event
+                        if (features.length) {
+                            map.setPitch(60); //régler la perspective
+                            // Get coordinates from the symbol and center the map on those coordinates
+                            map.flyTo({
+                                center: features[0].geometry.coordinates,
+                                zoom: 7,
+                                bearing: -30, // régler l'orientation de la carte, en degré
+                                speed: 0.9,
+                                curve: 1.9,
+                                easing: function (t) {
+                                    return t;
+                                }
+                            });
+                            /* afficher le titre et la description du point */
+                            document.getElementById('titre').innerHTML = features[0].properties.title;
+                            document.getElementById('description').innerHTML = features[0].properties.description;
+                            document.getElementById('descr').className += "anim";
+                        }
+                    });
+                });
+                // même approche que ci-dessus pour changer le style du curseur
+                // pour montrer que le marker est cliquable
+                map.on('mousemove', function (e) {
+                    map.featuresAt(e.point, {
+                        layer: 'symbols',
+                        radius: 10
+                    }, function (err, features) {
+                        if (err) throw err;
+                        map.getCanvas().style.cursor = features.length ? 'pointer' : '';
+                    });
+                });
+
+                window.switchVisibility = function () {
+                    map.setLayoutProperty('route', 'visibility', 'visible');
+                    map.setLayoutProperty('symbols', 'visibility', 'visible');
+                }
+
+                /*on repasse à la vue initiale d'en haut, sans angle. Idéalement il faudrait utiliser map.fitBounds pour que tous les points s'affichent cf https://www.mapbox.com/mapbox-gl-js/api/#Map.fitBounds*/               
+                window.displayFlat = function () {
+                    map.setPitch(0);
+                    map.flyTo({
+                        center: [14.561, 44.494],
+                        zoom: 4,
+                        bearing: 0
+                    })
+                    /*ne pas afficher la zone de texte lorsqu'on dézoome*/
+                    document.getElementById('titre').innerHTML = '';
+                    document.getElementById('description').innerHTML = '';   
+                }
+
+
+                
+            </script>
+
+        </body>
+
+</html>
